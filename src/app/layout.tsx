@@ -9,8 +9,8 @@ const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 const cinzel = Cinzel({ subsets: ['latin'], variable: '--font-cinzel' })
 
 export const metadata: Metadata = {
-  title: 'Life RPG Manager',
-  description: 'Manage your life as an MMORPG game with quests, levels, and jobs',
+  title: 'DunyaQuest',
+  description: 'Manage your life journey as an epic quest with goals, levels, and achievements',
 }
 
 export default function RootLayout({

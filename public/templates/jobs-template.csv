@@ -1,0 +1,7 @@
+name,level,xp,nextLevelXp
+Professional,2,350,1500
+Health,3,200,2000
+Knowledge,4,800,2500
+Social,1,500,1000
+Creativity,2,750,1500
+Finance,1,250,1000

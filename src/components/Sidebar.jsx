@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { 
-  FaHome, 
-  FaScroll, 
-  FaUser, 
-  FaBriefcase, 
-  FaTrophy, 
+import {
+  FaHome,
+  FaScroll,
+  FaUser,
+  FaBriefcase,
+  FaTrophy,
   FaCog,
   FaBars,
   FaTimes,
@@ -17,7 +17,7 @@ const Sidebar = () => {
   const { character } = useGameContext()
   const location = useLocation()
   const [isCollapsed, setIsCollapsed] = useState(false)
-  
+
   // Calculate XP percentage
   const xpPercentage = Math.floor((character.xp / character.nextLevelXp) * 100)
 
@@ -32,7 +32,7 @@ const Sidebar = () => {
   ]
 
   return (
-    <aside 
+    <aside
       className={`bg-background-dark transition-all duration-300 ${
         isCollapsed ? 'w-20' : 'w-64'
       } h-screen flex flex-col border-r border-primary/30`}
@@ -40,10 +40,10 @@ const Sidebar = () => {
       <div className="flex items-center justify-between p-4 border-b border-primary/30">
         {!isCollapsed && (
           <h1 className="text-xl font-bold text-primary font-display">
-            <span className="highlight-text">Life</span>RPG
+            <span className="highlight-text">Dunya</span>Quest
           </h1>
         )}
-        <button 
+        <button
           onClick={() => setIsCollapsed(!isCollapsed)}
           className="p-2 rounded-md hover:bg-background-light"
         >
@@ -76,8 +76,8 @@ const Sidebar = () => {
                 <p className="text-text-muted">{character.xp}/{character.nextLevelXp} XP</p>
               </div>
               <div className="xp-bar">
-                <div 
-                  className="xp-bar-fill" 
+                <div
+                  className="xp-bar-fill"
                   style={{ width: `${xpPercentage}%` }}
                 ></div>
               </div>

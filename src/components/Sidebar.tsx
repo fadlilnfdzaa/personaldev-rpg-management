@@ -43,7 +43,7 @@ const Sidebar = () => {
       <div className="flex items-center justify-between p-4 border-b border-primary/30">
         {!isCollapsed && (
           <h1 className="text-xl font-bold text-primary">
-            <span className="highlight-text">Life</span>RPG
+            <span className="highlight-text">Dunya</span>Quest
           </h1>
         )}
         <button

@@ -1,10 +1,12 @@
 import { useState } from 'react'
-import { FaCog, FaUser, FaBell, FaPalette, FaShieldAlt, FaDatabase, FaSave } from 'react-icons/fa'
+import { FaCog, FaUser, FaBell, FaPalette, FaShieldAlt, FaDatabase, FaSave, FaFileImport, FaFileExport } from 'react-icons/fa'
 import { useGameContext } from '@/lib/GameContext'
+import CSVImport from '@/components/CSVImport'
+import { downloadCSV } from '@/lib/csvUtils'
 
 export default function Settings() {
-  const { character } = useGameContext()
-  const [activeTab, setActiveTab] = useState('profile')
+  const { character, quests, jobs, importDataFromCSV } = useGameContext()
+  const [activeTab, setActiveTab] = useState('data')
   const [formData, setFormData] = useState({
     name: character.name,
     email: 'adventurer@example.com',
@@ -59,7 +61,7 @@ export default function Settings() {
           {activeTab === 'profile' && (
             <div className="space-y-6">
               <h2 className="text-xl font-bold">Profile Settings</h2>
-              
+
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-text-muted mb-1">
@@ -73,7 +75,7 @@ export default function Settings() {
                     className="w-full bg-background rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
                   />
                 </div>
-                
+
                 <div>
                   <label className="block text-sm font-medium text-text-muted mb-1">
                     Email
@@ -86,7 +88,7 @@ export default function Settings() {
                     className="w-full bg-background rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
                   />
                 </div>
-                
+
                 <div>
                   <label className="block text-sm font-medium text-text-muted mb-1">
                     Bio
@@ -99,7 +101,7 @@ export default function Settings() {
                     rows={4}
                   />
                 </div>
-                
+
                 <div>
                   <label className="block text-sm font-medium text-text-muted mb-1">
                     Primary Job Class
@@ -118,9 +120,9 @@ export default function Settings() {
                     <option value="Finance">Finance</option>
                   </select>
                 </div>
-                
+
                 <div className="flex justify-end">
-                  <button 
+                  <button
                     type="submit"
                     className="rpg-border bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-md flex items-center space-x-2 transition-all duration-200"
                   >
@@ -131,11 +133,11 @@ export default function Settings() {
               </form>
             </div>
           )}
-          
+
           {activeTab === 'appearance' && (
             <div className="space-y-6">
               <h2 className="text-xl font-bold">Appearance Settings</h2>
-              
+
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-text-muted mb-1">
@@ -148,7 +150,7 @@ export default function Settings() {
                     <button className="w-12 h-12 bg-purple-900 rounded-lg"></button>
                   </div>
                 </div>
-                
+
                 <div>
                   <label className="block text-sm font-medium text-text-muted mb-1">
                     Accent Color
@@ -161,7 +163,7 @@ export default function Settings() {
                     <button className="w-8 h-8 bg-amber-500 rounded-full"></button>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <label className="text-sm font-medium text-text-muted">
                     Enable Animations
@@ -175,31 +177,189 @@ export default function Settings() {
               </div>
             </div>
           )}
-          
+
           {activeTab === 'notifications' && (
             <div className="space-y-6">
               <h2 className="text-xl font-bold">Notification Settings</h2>
               <p className="text-text-muted">Configure how and when you receive notifications.</p>
-              
+
               {/* Notification settings content would go here */}
             </div>
           )}
-          
+
           {activeTab === 'privacy' && (
             <div className="space-y-6">
               <h2 className="text-xl font-bold">Privacy Settings</h2>
               <p className="text-text-muted">Manage your privacy preferences.</p>
-              
+
               {/* Privacy settings content would go here */}
             </div>
           )}
-          
+
           {activeTab === 'data' && (
             <div className="space-y-6">
               <h2 className="text-xl font-bold">Data Management</h2>
-              <p className="text-text-muted">Export or delete your data.</p>
-              
-              {/* Data management content would go here */}
+              <p className="text-text-muted">Import or export your data.</p>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                <div className="space-y-6">
+                  <h3 className="text-lg font-semibold text-primary">Import Data</h3>
+
+                  {/* Quest Import */}
+                  <CSVImport
+                    onImport={importDataFromCSV}
+                    dataType="quests"
+                    schema={{
+                      title: { type: 'string', required: true },
+                      description: { type: 'string', required: true },
+                      type: { type: 'string', required: true },
+                      xp: { type: 'number', required: true },
+                      job: { type: 'string', required: true },
+                      deadline: { type: 'date', required: false }
+                    }}
+                  />
+
+                  {/* Character Import */}
+                  <CSVImport
+                    onImport={importDataFromCSV}
+                    dataType="character"
+                    schema={{
+                      name: { type: 'string', required: true },
+                      level: { type: 'number', required: false },
+                      xp: { type: 'number', required: false },
+                      nextLevelXp: { type: 'number', required: false },
+                      strength: { type: 'number', required: false },
+                      intelligence: { type: 'number', required: false },
+                      charisma: { type: 'number', required: false },
+                      discipline: { type: 'number', required: false }
+                    }}
+                  />
+
+                  {/* Jobs Import */}
+                  <CSVImport
+                    onImport={importDataFromCSV}
+                    dataType="jobs"
+                    schema={{
+                      name: { type: 'string', required: true },
+                      level: { type: 'number', required: true },
+                      xp: { type: 'number', required: true },
+                      nextLevelXp: { type: 'number', required: true }
+                    }}
+                  />
+                </div>
+
+                <div className="space-y-6">
+                  <h3 className="text-lg font-semibold text-primary">Export Data</h3>
+
+                  <div className="status-window">
+                    <h3 className="status-window-title mb-4">Export Options</h3>
+                    <p className="mb-4 text-sm text-text-muted">
+                      Download your data in CSV format for backup or to use in other applications.
+                    </p>
+
+                    <div className="space-y-3">
+                      <button
+                        className="w-full flex items-center justify-between p-3 bg-background-dark rounded-md hover:bg-background transition-colors"
+                        onClick={() => downloadCSV(quests, 'dunyaquest-quests.csv')}
+                      >
+                        <span className="font-medium">Export Quests</span>
+                        <FaFileExport />
+                      </button>
+
+                      <button
+                        className="w-full flex items-center justify-between p-3 bg-background-dark rounded-md hover:bg-background transition-colors"
+                        onClick={() => {
+                          // Format character data for CSV
+                          const charData = [{
+                            name: character.name,
+                            level: character.level,
+                            xp: character.xp,
+                            nextLevelXp: character.nextLevelXp,
+                            strength: character.stats.strength,
+                            intelligence: character.stats.intelligence,
+                            charisma: character.stats.charisma,
+                            discipline: character.stats.discipline
+                          }];
+                          downloadCSV(charData, 'dunyaquest-character.csv');
+                        }}
+                      >
+                        <span className="font-medium">Export Character</span>
+                        <FaFileExport />
+                      </button>
+
+                      <button
+                        className="w-full flex items-center justify-between p-3 bg-background-dark rounded-md hover:bg-background transition-colors"
+                        onClick={() => downloadCSV(jobs, 'dunyaquest-jobs.csv')}
+                      >
+                        <span className="font-medium">Export Jobs</span>
+                        <FaFileExport />
+                      </button>
+
+                      <button
+                        className="w-full flex items-center justify-between p-3 bg-background-dark rounded-md hover:bg-background transition-colors"
+                        onClick={() => {
+                          // Export all data as a zip file
+                          downloadCSV(quests, 'dunyaquest-quests.csv');
+
+                          // Format character data for CSV
+                          const charData = [{
+                            name: character.name,
+                            level: character.level,
+                            xp: character.xp,
+                            nextLevelXp: character.nextLevelXp,
+                            strength: character.stats.strength,
+                            intelligence: character.stats.intelligence,
+                            charisma: character.stats.charisma,
+                            discipline: character.stats.discipline
+                          }];
+                          downloadCSV(charData, 'dunyaquest-character.csv');
+
+                          downloadCSV(jobs, 'dunyaquest-jobs.csv');
+                        }}
+                      >
+                        <span className="font-medium">Export All Data</span>
+                        <FaFileExport />
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="status-window">
+                    <h3 className="status-window-title mb-4">CSV Templates</h3>
+                    <p className="mb-4 text-sm text-text-muted">
+                      Download template CSV files to help you format your data correctly.
+                    </p>
+
+                    <div className="space-y-3">
+                      <a
+                        href="/templates/quests-template.csv"
+                        download
+                        className="w-full flex items-center justify-between p-3 bg-background-dark rounded-md hover:bg-background transition-colors"
+                      >
+                        <span className="font-medium">Quest Template</span>
+                        <FaFileExport />
+                      </a>
+
+                      <a
+                        href="/templates/character-template.csv"
+                        download
+                        className="w-full flex items-center justify-between p-3 bg-background-dark rounded-md hover:bg-background transition-colors"
+                      >
+                        <span className="font-medium">Character Template</span>
+                        <FaFileExport />
+                      </a>
+
+                      <a
+                        href="/templates/jobs-template.csv"
+                        download
+                        className="w-full flex items-center justify-between p-3 bg-background-dark rounded-md hover:bg-background transition-colors"
+                      >
+                        <span className="font-medium">Jobs Template</span>
+                        <FaFileExport />
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
         </div>
